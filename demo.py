@@ -18,7 +18,7 @@ MyWidget:
     points:
         [
         (
-        self.x + (x + 1) * self.width / (self.nb_points + 2),
+        x * self.width / self.nb_points,
         self.center_y + self.height * sin(x * self.mult * 1.0 / self.nb_points + self.offset) / 2
         )
         for x in range(self.nb_points)
@@ -36,12 +36,18 @@ MyWidget:
 
         Line:
             points:
-                list(chain(* ((root.width / 4 + cos(x) * y / 2, root.height / 2 + sin(x) * y / 2) for (x, y) in self.points)))\
+                list(chain(* ((
+                root.width / 4 + cos(x) * y / 2,
+                root.height / 2 + sin(x) * y / 2
+                ) for (x, y) in self.points)))\
                 if self.points else []
             width: 5
         Line:
             points:
-                list(chain(* ((3 * root.width / 4 - cos(x) * y / 2, root.height / 2 - sin(x) * y / 2) for (x, y) in reversed(self.points))))\
+                list(chain(* ((
+                3 * root.width / 4 - cos(x) * y / 2,
+                root.height / 2 - sin(x) * y / 2
+                ) for (x, y) in reversed(self.points))))\
                 if self.points else []
             width: 5
             #close: True
