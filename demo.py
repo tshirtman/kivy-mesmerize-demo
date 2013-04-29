@@ -16,38 +16,34 @@ kv = '''
 
 MyWidget:
     points:
-        [
-        (
-        x * self.width / self.nb_points,
-        self.center_y + self.height * sin(x * self.mult * 1.0 / self.nb_points + self.offset) / 2
-        )
-        for x in range(self.nb_points)
-        ]
+        [(
+        x * 1.0 / self.nb_points,
+        sin(x * self.mult / self.nb_points + self.offset) / 2
+        ) for x in range(self.nb_points) ]
+
+    points2: [ (x * 10 ** 4, (self.center_y + self.height * y) / 2) for (x, y) in self.points ]
 
     canvas:
         Color:
             rgba: self.color
-        #Line:
-            #points: self.points and list(chain(*self.points)) or []
-            #width: 5
-        #Line:
-            #points: self.points and list(chain(* ((x, self.top - y) for (x, y) in self.points))) or []
-            #width: 5
 
         Line:
             points:
                 list(chain(* ((
-                root.width / 4 + cos(x) * y / 2,
-                root.height / 2 + sin(x) * y / 2
-                ) for (x, y) in self.points)))\
+                root.width / 4 + cos(x) * y,
+                root.height / 2 + sin(x) * y
+                ) for (x, y) in self.points2)))\
                 if self.points else []
             width: 5
+
+        Color:
+            rgba: self.color[3:0:-1] + self.color[3:]
         Line:
             points:
                 list(chain(* ((
-                3 * root.width / 4 - cos(x) * y / 2,
-                root.height / 2 - sin(x) * y / 2
-                ) for (x, y) in reversed(self.points))))\
+                3 * root.width / 4 - cos(x) * y,
+                root.height / 2 - sin(x) * y
+                ) for (x, y) in reversed(self.points2))))\
                 if self.points else []
             width: 5
             #close: True
@@ -55,7 +51,7 @@ MyWidget:
 
 
 class MyWidget(Widget):
-    nb_points = NumericProperty(150)
+    nb_points = NumericProperty(50)
     offset = NumericProperty(0)
     mult = NumericProperty(50)
     color = ListProperty([1, 0, 1, 1])
@@ -76,13 +72,11 @@ class MyApp(App):
 
         program.start(self.root)
         program.bind(on_complete=lambda *args: program.start(self.root))
-        #Clock.schedule_interval(self.change_nb_points, 1)
+        Clock.schedule_interval(self.change_nb_points, 20)
         return self.root
 
     def change_nb_points(self, *args):
-        print "called"
-        self.nb_points = randint(1, 200)
-        print self.nb_points
+        self.root.nb_points = randint(1, 15) * 10
         return True
 
 
